@@ -1,27 +1,28 @@
-FROM httpd:2.4-alpine
+FROM alpine:edge
 
 RUN apk update \
    && apk add --no-cache \
            curl \
-           git \
            make \
            gcc \
            musl-dev
 
-COPY files/entrypoint.sh /usr/bin/entrypoint
+COPY files/* /app/
 
-RUN chmod +x /usr/bin/entrypoint \
-   && mkdir -p /termbin/basedir /termbin/confs
-
-RUN git clone https://github.com/solusipse/fiche.git /termbin/code
-
-RUN cd /termbin/code \
+RUN adduser -S -D -u 1000 -h /app fiche \
+   && cd /app \
    && make \
-   && make install
+   && chmod +x entrypoint.sh \
+   && mkdir -p /data \
+   && chown -R fiche /app /data
 
-VOLUME /termbin/basedir /termbin/confs
+USER fiche
+
+VOLUME /app /data
+
+WORKDIR /app
 
 EXPOSE 9999
 
-CMD ['/usr/bin/entrypoint.sh']
+CMD ["/app/entrypoint.sh"]
 
