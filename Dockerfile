@@ -1,28 +1,19 @@
-FROM alpine:edge
+FROM busybox
 
-RUN apk update \
-   && apk add --no-cache \
-           curl \
-           make \
-           gcc \
-           musl-dev
+LABEL maintainer "Frederico Freire Boaventura <frederico@boaventura.net>"
+LABEL version "1.0"
 
-COPY files/* /app/
+ENV DOMAIN "localhost"
+ENV SLUG 8
+ENV BUFFER 4096
+ENV USER "root"
+ENV PORT "9999"
 
-RUN adduser -S -D -u 1000 -h /app fiche \
-   && cd /app \
-   && make \
-   && chmod +x entrypoint.sh \
-   && mkdir -p /data \
-   && chown -R fiche /app /data
-
-USER fiche
-
-VOLUME /app /data
-
-WORKDIR /app
+ADD files/fiche-static /fiche
+ADD files/index.html /data/
 
 EXPOSE 9999
 
-CMD ["/app/entrypoint.sh"]
+VOLUME /data
 
+CMD /fiche -d ${DOMAIN} -o /data -l /dev/stdout -p ${PORT} -s ${SLUG} -B ${BUFFER} -u ${USER}
