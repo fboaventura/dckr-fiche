@@ -1,22 +1,12 @@
-# -----------------------------------
-# Fiche MAKEFILE
-# https://github.com/solusipse/fiche
-# solusipse.net
-# -----------------------------------
+# for debug add -g -O0 to line below
+CFLAGS+=-pthread -O2 -Wall -Wextra -Wpedantic -Wstrict-overflow -fno-strict-aliasing -std=gnu11
+prefix=/usr/local/bin
 
-CFLAGS+=-pthread -O2
-prefix=/usr/local
-
-all: fiche fiche-static
-
-fiche:
-	gcc ${CFLAGS} fiche.c -o fiche
-
-fiche-static:
-	gcc ${CFLAGS} -static -w fiche-root.c -o fiche-static
+all:
+	${CC} main.c fiche.c $(CFLAGS) -w -static -o fiche-static
 
 install: fiche
-	install -m 0755 fiche $(prefix)/bin
+	install -m 0755 fiche $(prefix)
 
 clean:
 	rm -f fiche fiche-static

@@ -1,0 +1,3 @@
+[submodule "fiche"]
+	path = fiche
+	url = https://github.com/solusipse/fiche.git
