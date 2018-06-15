@@ -19,7 +19,8 @@ You can, of course, pass some custom values to fiche, in order to make it more p
 ENV DOMAIN "localhost"
 ENV SLUG 8
 ENV BUFFER 4096
-ENV USER "root"
+ENV USER "nobody"
+ENV PORT "9999"
 ```
 
 Once the instance is running, all you have to do is run:
@@ -38,7 +39,7 @@ $ tree
     └── index.txt
 
 1 directory, 1 file
-$ cat nzzf6lk0/index.txt 
+$ cat nzzf6lk0/index.txt
 Hello World!
 ```
 
@@ -68,51 +69,4 @@ services:
     volumes:
     - fiche-data:/app/www
 ```
-
-### Changes to fiche
-
-In order to make it work properly in a so small image, I had to make two little changes to `fiche.c`, that can be viewed below. These changes will only make sure that fiche is ran always as `root`.
-
-```diff
-$ diff -u fiche.c fiche-root.c 
---- fiche.c     2017-07-31 02:53:26.530938821 -0300
-+++ fiche-root.c        2017-07-31 18:20:20.700240056 -0300
-@@ -38,6 +38,7 @@
-     parse_parameters(argc, argv);
-     set_domain_name();
- 
-+    /*
-     if (getuid() == 0)
-     {
-         if (UID == -1)
-@@ -47,6 +48,7 @@
-         if (setuid(UID) != 0)
-             error("Unable to drop user privileges");
-     }
-+    */
- 
-     if (BASEDIR == NULL)
-         set_basedir();
-@@ -466,11 +468,14 @@
- void set_uid_gid(char *username)
- {
-     struct passwd *userdata = getpwnam(username);
--    if (userdata == NULL)
--        error("Provided user doesn't exist");
--
--    UID = userdata->pw_uid;
--    GID = userdata->pw_gid;
-+    if (userdata == NULL) {
-+        // error("Provided user doesn't exist");
-+        UID = 0;
-+        GID = 0;
-+     } else {
-+        UID = userdata->pw_uid;
-+        GID = userdata->pw_gid;
-+     }
- }
- 
- int check_protocol(char *buffer)
-```
-
 
