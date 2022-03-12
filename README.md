@@ -1,3 +1,5 @@
+[![dockeri.co](https://dockeri.co/image/fboaventura/dckr-fiche)](https://hub.docker.com/r/fboaventura/dckr-fiche)
+
 # fboaventura/dckr-fiche
 
 Docker instance to run [solusipse/fiche](https://github.com/solusipse/fiche) implementation of a pastebin app that have terminal command line in mind, called [termbin](https://termbin.com).
